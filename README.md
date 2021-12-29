@@ -15,12 +15,12 @@ status](https://www.r-pkg.org/badges/version/gfx3d)](https://CRAN.R-project.org/
 coverage](https://codecov.io/gh/matt-dray/gpx3d/branch/main/graph/badge.svg)](https://codecov.io/gh/matt-dray/gpx3d?branch=main)
 <!-- badges: end -->
 
-An in-development, opinionated package to create interactive 3D plots of
-workout routes.
+An in-development, opinionated R package to create interactive 3D plots
+of workout routes.
 
-Takes a .gpx file—downloaded from Apple Health for example—and extracts
-the time, coordinates and elevation into an sf-class object. You can
-then plot this as a 3D interactive object thanks to
+Takes a .gpx file—downloaded from the Apple Health app, for example—and
+extracts the time, coordinates and elevation into an sf-class object.
+You can then plot this as a 3D interactive object thanks to
 [{ggrgl}](https://coolbutuseless.github.io/package/ggrgl/index.html).
 
 ## Install
@@ -45,7 +45,7 @@ Christmas morning.
 
 ``` r
 x <- "apple_health_export/workout-routes/route_2021-12-25_9.31am.gpx"
-y <- extract_gpx_route(x)
+y <- extract_gpx3d(x)
 y
 ```
 
@@ -67,14 +67,19 @@ y
     # 9  2021-12-25 08:40:19 55.13774 0.556263 50.86274 POINT (0.556263 50.86274) 3.160661 [m]
     # 10 2021-12-25 08:40:20 55.23403 0.556294 50.86277 POINT (0.556294 50.86277) 3.618288 [m]
 
-Use `plot_gpx_route()` to plot the object output from
-`extract_gpx_route()`. This opens in an external RGL device.
+Use `plot_gpx3d()` to plot the object output from `extract_gpx3d()`.
+This opens in an external RGL device.
 
 ``` r
-plot_gpx_route(y)
+plot_gpx3d(y)
 ```
 
 The plots can’t be embedded here, so here’s a screenshot.
+
+Note that the title contains the total distance, the difference in
+minimum and maximum elevation, and the date and time of the activity.
+For simplicity, the function is currently pretty inflexible, but I may
+update this in future.
 
 <div class="figure">
 
@@ -90,7 +95,7 @@ You can use `route_only = TRUE` to remove all of the chart elements
 except for the route itself.
 
 ``` r
-plot_gpx_route(y, route_only = TRUE)
+plot_gpx3d(y, route_only = TRUE)
 ```
 
 <div class="figure">
@@ -99,9 +104,8 @@ plot_gpx_route(y, route_only = TRUE)
 
 </div>
 
-The chart is interactive so you can click and drag the chart, and scroll
-to zoom. here’s a more exaggerated view of the climb from the
-south-west.
+The chart is interactive so you can click and drag it, and scroll to
+zoom. Here’s a more exaggerated view of the climb from the south-west.
 
 <div class="figure">
 

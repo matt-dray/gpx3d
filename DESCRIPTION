@@ -1,9 +1,9 @@
 Package: gpx3d
 Title: 3D Plot A Route From A GPX File
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     person("Matt", "Dray", , "mwdray@gmail.com", role = c("aut", "cre"))
-Description: Extract time, coordinates and elevation from a gpx file. Convert 
+Description: Extract time, coordinates and elevation from a GPX file. Convert 
     to an sf-class dataframe. Optionally plot a 3D rendering of the route.
     Designed with 'workout' data from the Apple Health app in mind; developed
     for personal use.

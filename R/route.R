@@ -1,5 +1,5 @@
 
-.get_route_info <- function(trkseg_list) {
+.tabulate_gpx3d <- function(trkseg_list) {
 
   trkseg_attrs <- attributes(trkseg_list)
 
@@ -26,18 +26,18 @@
 #' @examples
 #' \dontrun{
 #' x <- "apple_health_export/workout-routes/route_2021-12-25_9.31am.gpx"
-#' extract_gpx_route(x)
+#' extract_gpx3d(x)
 #' }
 #'
 #' @export
-extract_gpx_route <- function(gpx_file) {
+extract_gpx3d <- function(gpx_file) {
 
   gpx_in <- xml2::read_xml(gpx_file)
   gpx_list <- xml2::as_list(gpx_in)
 
   route_list <- lapply(
     gpx_list$gpx$trk$trkseg,
-    function(x) .get_route_info(x)
+    function(x) .tabulate_gpx3d(x)
   )
 
   route_df <- do.call(rbind, route_list)
@@ -71,7 +71,7 @@ extract_gpx_route <- function(gpx_file) {
 #' the route. The chart title includes the total distance, elevation disparity, plus the
 #' date and start/end times.
 #'
-#' @param route_sf sf-class data.frame, output from \code{\link{extract_gpx_route}}.
+#' @param route_sf sf-class data.frame, output from \code{\link{extract_gpx3d}}.
 #' @param route_only Logical. Retain all chart elements if \code{FALSE} (default) or
 #'     retain only the route path if \code{FALSE}.
 #'
@@ -82,18 +82,18 @@ extract_gpx_route <- function(gpx_file) {
 #' @examples
 #' \dontrun{
 #' x <- "~/Downloads/apple_health_export/workout-routes/route_2021-12-25_9.31am.gpx"
-#' y <- extract_gpx_route(x)
-#' plot_gpx_route(y)
+#' y <- extract_gpx3d(x)
+#' plot_gpx3d(y)
 #' }
-plot_gpx_route <- function(route_sf, route_only = FALSE) {
+plot_gpx3d <- function(route_sf, route_only = FALSE) {
 
-  min_date <- format(min(route_sf$time), "%Y-%m-%d")
-  min_time <- format(min(route_sf$time), "%H:%M:%S")
-  max_time <- format(max(route_sf$time), "%H:%M:%S")
+  min_date   <- format(min(route_sf$time), "%Y-%m-%d")
+  min_time   <- format(min(route_sf$time), "%H:%M:%S")
+  max_time   <- format(max(route_sf$time), "%H:%M:%S")
   total_dist <- round(sum(route_sf$distance, na.rm = TRUE) / 1000, 1)
-  min_elev <- min(route_sf$ele)
-  max_elev <- max(route_sf$ele)
-  elev_diff <- round(max_elev - min_elev)
+  min_elev   <- min(route_sf$ele)
+  max_elev   <- max(route_sf$ele)
+  elev_diff  <- round(max_elev - min_elev)
 
   route_plot <-
     ggplot2::ggplot() +
