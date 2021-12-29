@@ -24,3 +24,5 @@ Imports:
 Remotes: 
     mikefc/devoutrgl,
     mikefc/ggrgl
+Suggests: 
+    covr
