@@ -22,7 +22,7 @@ Imports:
     sf,
     xml2
 Remotes: 
-    mikefc/devoutrgl,
-    mikefc/ggrgl
+    coolbutuseless/devoutrgl,
+    coolbutuseless/ggrgl
 Suggests: 
     covr
