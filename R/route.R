@@ -1,36 +1,34 @@
 
-.tabulate_gpx3d <- function(trkseg_list) {
-
-  trkseg_attrs <- attributes(trkseg_list)
-
-  data.frame(
-    time = strptime(trkseg_list[["time"]][[1]], "%Y-%m-%dT%H:%M:%SZ"),
-    ele  = as.numeric(trkseg_list[["ele"]][[1]]),
-    lon  = as.numeric(trkseg_attrs[["lon"]]),
-    lat  = as.numeric(trkseg_attrs[["lat"]])
-  )
-
-}
-
-#' Extract Time, Coordinates And Elevation From a GPX File
+#' Extract A Dataframe From A GPX File
 #'
-#' Takes a .gpx file as input and extract the date, time, latitude, longitude
-#' and elevation data to a data.frame; converts it to sf-class with the
-#' coordinates coerced to a geometry column. Designed for use with .gpx files
-#' downloaded from the Apple Health app, which represent individual 'workouts'.
+#' Takes a .gpx file as input and extracts the date, time, latitude, longitude
+#' and elevation data to a data.frame. Geometry and point distances are
+#' calculated with coercion to sf-class. Designed for use with .gpx files
+#' downloaded from the Apple Health app, which represent individual workouts.
 #'
 #' @param gpx_file Character. Path to a valid .gpx file.
+#' @param sf_out Logical. Retain sf-class in output (defaults to TRUE), or output
+#'     as a data.frame only (FALSE)? Package {sf} is used within the function to
+#'     calculate distance between points.
 #'
-#' @return sf-class data.frame with columns time, lon, lat, geometry, distance
+#' @details The function usess the {sf} package to create a 'geometry' column
+#'     from which distances can be generated between points along the route. You
+#'     may want to retain the sf class for further geospatial analysis,
+#'     otherwise you can output a regular data.frame with \code{sf_out = FALSE},
+#'     which strips the sf metadata and the 'geometry' column.
+#'
+#' @return A data.frame, sf-class by default, with columns 'time' (datetime),
+#'    'ele' (double), 'lon' (double), 'lat' (double) and 'distance'
+#'    (units, metres); 'geometry' (POINT) if sf-class is retained with
+#'    \code{sf_out = TRUE}.
 #'
 #' @examples
-#' \dontrun{
-#' x <- "apple_health_export/workout-routes/route_2021-12-25_9.31am.gpx"
-#' extract_gpx3d(x)
-#' }
+#' \dontrun{extract_gpx3d(gfx_segment)}
 #'
 #' @export
-extract_gpx3d <- function(gpx_file) {
+extract_gpx3d <- function(gpx_file, sf_out = TRUE) {
+
+  .validate_extract_gpx3d(gpx_file, sf_out)
 
   gpx_in <- xml2::read_xml(gpx_file)
   gpx_list <- xml2::as_list(gpx_in)
@@ -43,7 +41,7 @@ extract_gpx3d <- function(gpx_file) {
   route_df <- do.call(rbind, route_list)
   rownames(route_df) <- NULL
 
-  route_sf <- sf::st_as_sf(
+  route_df <- sf::st_as_sf(
     route_df,
     coords = c("lon", "lat"),
     crs = 4326,
@@ -51,48 +49,58 @@ extract_gpx3d <- function(gpx_file) {
   )
 
   # https://stackoverflow.com/questions/49853696/distances-of-points-between-rows-with-sf
-  route_sf$lead <- c(
-    route_sf$geometry[1],
-    route_sf$geometry[as.numeric(rownames(route_sf)) - 1]
+  route_df$lead <- c(
+    route_df$geometry[1],
+    route_df$geometry[as.numeric(rownames(route_df)) - 1]
   )
 
-  route_sf$distance <- c(
-    sf::st_distance(route_sf$geometry, route_sf$lead, by_element = TRUE)
+  route_df$distance <- c(
+    sf::st_distance(route_df$geometry, route_df$lead, by_element = TRUE)
   )
 
-  route_sf[, c("time", "ele", "lon", "lat", "geometry", "distance")]
+  route <- route_df[, c("time", "ele", "lon", "lat", "geometry", "distance")]
+
+  if (!sf_out) {
+    route_df <- as.data.frame(route_df)
+    route <- route_df[, c("time", "ele", "lon", "lat", "distance")]
+  }
+
+  return(route)
 
 }
 
 #' Render A 3D Plot Of A Route From A GPX File
 #'
-#' Create a {ggplot2} plot object with a third dimension thanks to {ggrgl}. The x and y
-#' coordinates are the longitude and latitude, the z dimension is the elevation along
-#' the route. The chart title includes the total distance, elevation disparity, plus the
-#' date and start/end times.
+#' Create a {ggplot2} plot object with a third dimension thanks to {ggrgl}. The
+#' x and y coordinates are the longitude and latitude, the z dimension is the
+#' elevation along the route. The chart title includes the total distance,
+#' elevation disparity, plus the date and start/end times.
 #'
-#' @param route_sf sf-class data.frame, output from \code{\link{extract_gpx3d}}.
-#' @param route_only Logical. Retain all chart elements if \code{FALSE} (default) or
-#'     retain only the route path if \code{FALSE}.
+#' @param route_df A data.frame, optionally sf-class. Output from must be in the
+#'     format output via \code{\link{extract_gpx3d}}.
+#' @param route_only Logical. Retain all chart elements if \code{FALSE}
+#'     (default) or retain only the route path if \code{FALSE}.
 #'
-#' @return A 3D rendering of the route path in a {devoutrgl} device.
-#'
-#' @export
+#' @return An interactive 3D rendering of the route path in a {devoutrgl}
+#'     device.
 #'
 #' @examples
 #' \dontrun{
-#' x <- "~/Downloads/apple_health_export/workout-routes/route_2021-12-25_9.31am.gpx"
-#' y <- extract_gpx3d(x)
+#' x <- extract_gpx3d(gfx_segment)
 #' plot_gpx3d(y)
 #' }
-plot_gpx3d <- function(route_sf, route_only = FALSE) {
+#'
+#' @export
+plot_gpx3d <- function(route_df, route_only = FALSE) {
 
-  min_date   <- format(min(route_sf$time), "%Y-%m-%d")
-  min_time   <- format(min(route_sf$time), "%H:%M:%S")
-  max_time   <- format(max(route_sf$time), "%H:%M:%S")
-  total_dist <- round(sum(route_sf$distance, na.rm = TRUE) / 1000, 1)
-  min_elev   <- min(route_sf$ele)
-  max_elev   <- max(route_sf$ele)
+  .validate_plot_gpx3d(route_df, route_only)
+
+  min_date   <- format(min(route_df$time), "%Y-%m-%d")
+  min_time   <- format(min(route_df$time), "%H:%M:%S")
+  max_time   <- format(max(route_df$time), "%H:%M:%S")
+  total_dist <- round(sum(route_df$distance, na.rm = TRUE) / 1000, 1)
+  min_elev   <- min(route_df$ele)
+  max_elev   <- max(route_df$ele)
   elev_diff  <- round(max_elev - min_elev)
 
   route_plot <-
@@ -107,7 +115,7 @@ plot_gpx3d <- function(route_sf, route_only = FALSE) {
     ggplot2::xlab("Longitude") +
     ggplot2::ylab("Latitude") +
     ggrgl::geom_path_3d(
-      ggplot2::aes(route_sf$lon, route_sf$lat, z = route_sf$ele),
+      ggplot2::aes(route_df$lon, route_df$lat, z = route_df$ele),
       extrude = TRUE,
       extrude_edge_colour = 'grey20',
       extrude_face_fill = 'grey80',

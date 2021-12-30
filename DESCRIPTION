@@ -1,12 +1,11 @@
 Package: gpx3d
 Title: 3D Plot A Route From A GPX File
-Version: 0.0.0.9001
+Version: 0.0.0.9002
 Authors@R: 
     person("Matt", "Dray", , "mwdray@gmail.com", role = c("aut", "cre"))
-Description: Extract time, coordinates and elevation from a GPX file. Convert 
-    to an sf-class dataframe. Optionally plot a 3D rendering of the route.
-    Designed with 'workout' data from the Apple Health app in mind; developed
-    for personal use.
+Description: Extract a data from a GPX file into a an sf-class dataframe, then
+    plot a 3D rendering of the route. Designed with workout-route data from the
+    Apple Health app in mind.
 URL: https://github.com/matt-dray/gpx3d
 BugReports: https://github.com/matt-dray/gpx3d/issues
 License: MIT + file LICENSE
@@ -15,14 +14,26 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Imports: 
+    cryogenic,
+    devout,
     devoutrgl,
     ggplot2,
     ggrgl,
     grDevices,
     sf,
+    snowcrash,
+    triangular,
     xml2
 Remotes: 
-    mikefc/devoutrgl,
-    mikefc/ggrgl
+    coolbutuseless/devout,
+    coolbutuseless/devoutrgl,
+    coolbutuseless/triangular,
+    coolbutuseless/snowcrash,
+    coolbutuseless/cryogenic,
+    coolbutuseless/ggrgl
 Suggests: 
+    testthat (>= 3.0.0),
     covr
+Config/testthat/edition: 3
+Depends: 
+    R (>= 2.10)
