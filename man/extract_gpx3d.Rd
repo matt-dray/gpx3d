@@ -2,26 +2,37 @@
 % Please edit documentation in R/route.R
 \name{extract_gpx3d}
 \alias{extract_gpx3d}
-\title{Extract Time, Coordinates And Elevation From a GPX File}
+\title{Extract A Dataframe From A GPX File}
 \usage{
-extract_gpx3d(gpx_file)
+extract_gpx3d(gpx_file, sf_out = TRUE)
 }
 \arguments{
 \item{gpx_file}{Character. Path to a valid .gpx file.}
+
+\item{sf_out}{Logical. Retain sf-class in output (defaults to TRUE), or output
+as a data.frame only (FALSE)? Package {sf} is used within the function to
+calculate distance between points.}
 }
 \value{
-sf-class data.frame with columns time, lon, lat, geometry, distance
+A data.frame, sf-class by default, with columns 'time' (datetime),
+'ele' (double), 'lon' (double), 'lat' (double) and 'distance'
+(units, metres); 'geometry' (POINT) if sf-class is retained with
+\code{sf_out = TRUE}.
 }
 \description{
-Takes a .gpx file as input and extract the date, time, latitude, longitude
-and elevation data to a data.frame; converts it to sf-class with the
-coordinates coerced to a geometry column. Designed for use with .gpx files
-downloaded from the Apple Health app, which represent individual 'workouts'.
+Takes a .gpx file as input and extracts the date, time, latitude, longitude
+and elevation data to a data.frame. Geometry and point distances are
+calculated with coercion to sf-class. Designed for use with .gpx files
+downloaded from the Apple Health app, which represent individual workouts.
+}
+\details{
+The function usess the {sf} package to create a 'geometry' column
+from which distances can be generated between points along the route. You
+may want to retain the sf class for further geospatial analysis,
+otherwise you can output a regular data.frame with \code{sf_out = FALSE},
+which strips the sf metadata and the 'geometry' column.
 }
 \examples{
-\dontrun{
-x <- "apple_health_export/workout-routes/route_2021-12-25_9.31am.gpx"
-extract_gpx3d(x)
-}
+\dontrun{extract_gpx3d(gfx_segment)}
 
 }

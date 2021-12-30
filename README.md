@@ -13,6 +13,8 @@ status](https://www.r-pkg.org/badges/version/gfx3d)](https://CRAN.R-project.org/
 [![R-CMD-check](https://github.com/matt-dray/gpx3d/workflows/R-CMD-check/badge.svg)](https://github.com/matt-dray/gpx3d/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/matt-dray/gpx3d/branch/main/graph/badge.svg)](https://codecov.io/gh/matt-dray/gpx3d?branch=main)
+[![Blog
+post](https://img.shields.io/badge/rostrum.blog-post-008900?labelColor=000000&logo=data%3Aimage%2Fgif%3Bbase64%2CR0lGODlhEAAQAPEAAAAAABWCBAAAAAAAACH5BAlkAAIAIf8LTkVUU0NBUEUyLjADAQAAACwAAAAAEAAQAAAC55QkISIiEoQQQgghRBBCiCAIgiAIgiAIQiAIgSAIgiAIQiAIgRAEQiAQBAQCgUAQEAQEgYAgIAgIBAKBQBAQCAKBQEAgCAgEAoFAIAgEBAKBIBAQCAQCgUAgEAgCgUBAICAgICAgIBAgEBAgEBAgEBAgECAgICAgECAQIBAQIBAgECAgICAgICAgECAQECAQICAgICAgICAgEBAgEBAgEBAgICAgICAgECAQIBAQIBAgECAgICAgIBAgECAQECAQIBAgICAgIBAgIBAgEBAgECAgECAgICAgICAgECAgECAgQIAAAQIKAAAh%2BQQJZAACACwAAAAAEAAQAAAC55QkIiESIoQQQgghhAhCBCEIgiAIgiAIQiAIgSAIgiAIQiAIgRAEQiAQBAQCgUAQEAQEgYAgIAgIBAKBQBAQCAKBQEAgCAgEAoFAIAgEBAKBIBAQCAQCgUAgEAgCgUBAICAgICAgIBAgEBAgEBAgEBAgECAgICAgECAQIBAQIBAgECAgICAgICAgECAQECAQICAgICAgICAgEBAgEBAgEBAgICAgICAgECAQIBAQIBAgECAgICAgIBAgECAQECAQIBAgICAgIBAgIBAgEBAgECAgECAgICAgICAgECAgECAgQIAAAQIKAAA7)](https://github.com/matt-dray/gpx3d)
 <!-- badges: end -->
 
 An in-development, opinionated R package to create interactive 3D plots
@@ -33,66 +35,70 @@ remotes::install_github("matt-dray/gpx3d")
 library(gpx3d)
 ```
 
-There are a number of dependencies. You must also [install
-XQuartz](https://www.xquartz.org/), if you haven’t already.
+There are a number of dependencies, including many that are not
+available on CRAN; see [the README for
+{ggrgl}](https://coolbutuseless.github.io/package/ggrgl/index.html#installation)
+for details. You must also [install XQuartz](https://www.xquartz.org/),
+if you haven’t already.
 
-## Example
+## Demo
 
-I downloaded my data from the Apple Health app and unzipped it. The
-apple\_health\_export/workout-routes/ directory contains .gpx files for
-recorded workouts. I’ll use a file that represents a 10 km run I took on
-Christmas morning.
+The package contains an example GPX file with an edited segment of a
+route I took as part of a 10 km run on Christmas morning 2021. It can be
+read in with `extract_gpx3d()`, which outputs an sf-class data.frame
+with geospatial information. (Alternatively, you can output a simpler
+data.frame object with the `extract_gpx3d()` argument `sf_out = FALSE`.)
 
 ``` r
-x <- "apple_health_export/workout-routes/route_2021-12-25_9.31am.gpx"
+x <- system.file("extdata", "segment.gpx", package = "gpx3d")
 y <- extract_gpx3d(x)
 y
 ```
 
-    # Simple feature collection with 3097 features and 5 fields
+    # Simple feature collection with 501 features and 5 fields
     # Geometry type: POINT
     # Dimension:     XY
-    # Bounding box:  xmin: 0.526628 ymin: 50.85036 xmax: 0.564496 ymax: 50.86593
+    # Bounding box:  xmin: 0.552347 ymin: 50.85061 xmax: 0.559273 ymax: 50.85968
     # Geodetic CRS:  WGS 84
     # First 10 features:
     #                   time      ele      lon      lat                  geometry     distance
-    # 1  2021-12-25 08:40:11 55.15309 0.556028 50.86274 POINT (0.556028 50.86274) 0.000000 [m]
-    # 2  2021-12-25 08:40:12 55.10019 0.556053 50.86273 POINT (0.556053 50.86273) 2.077275 [m]
-    # 3  2021-12-25 08:40:13 55.05168 0.556078 50.86272 POINT (0.556078 50.86272) 2.138860 [m]
-    # 4  2021-12-25 08:40:14 55.01673 0.556105 50.86271 POINT (0.556105 50.86271) 2.142997 [m]
-    # 5  2021-12-25 08:40:15 54.99454 0.556133 50.86270  POINT (0.556133 50.8627) 2.075322 [m]
-    # 6  2021-12-25 08:40:16 54.99935 0.556164 50.86270  POINT (0.556164 50.8627) 2.187047 [m]
-    # 7  2021-12-25 08:40:17 55.02570 0.556197 50.86271 POINT (0.556197 50.86271) 2.410257 [m]
-    # 8  2021-12-25 08:40:18 55.06934 0.556231 50.86272 POINT (0.556231 50.86272) 2.789951 [m]
-    # 9  2021-12-25 08:40:19 55.13774 0.556263 50.86274 POINT (0.556263 50.86274) 3.160661 [m]
-    # 10 2021-12-25 08:40:20 55.23403 0.556294 50.86277 POINT (0.556294 50.86277) 3.618288 [m]
+    # 1  2021-12-25 09:13:29 8.406136 0.559273 50.85109 POINT (0.559273 50.85109) 0.000000 [m]
+    # 2  2021-12-25 09:13:30 8.498508 0.559209 50.85109 POINT (0.559209 50.85109) 4.494285 [m]
+    # 3  2021-12-25 09:13:31 8.599027 0.559144 50.85109 POINT (0.559144 50.85109) 4.564465 [m]
+    # 4  2021-12-25 09:13:32 8.721706 0.559079 50.85109 POINT (0.559079 50.85109) 4.564465 [m]
+    # 5  2021-12-25 09:13:34 8.858613 0.559015 50.85109 POINT (0.559015 50.85109) 4.492909 [m]
+    # 6  2021-12-25 09:13:35 9.007253 0.558952 50.85109 POINT (0.558952 50.85109) 4.422707 [m]
+    # 7  2021-12-25 09:13:36 9.154713 0.558889 50.85109 POINT (0.558889 50.85109) 4.424104 [m]
+    # 8  2021-12-25 09:13:37 9.315786 0.558825 50.85109 POINT (0.558825 50.85109) 4.494284 [m]
+    # 9  2021-12-25 09:13:38 9.493576 0.558762 50.85109 POINT (0.558762 50.85109) 4.422707 [m]
+    # 10 2021-12-25 09:13:39 9.686247 0.558699 50.85109 POINT (0.558699 50.85109) 4.424104 [m]
 
-Use `plot_gpx3d()` to plot the object output from `extract_gpx3d()`.
-This opens in an external RGL device.
+Note that the result of `extract_gpx3d(x)` is also available in the
+package as the demo dataset `gpx_segment`.
+
+Now you can use `plot_gpx3d()` to plot the output from
+`extract_gpx3d()`. This opens in an external RGL device.
 
 ``` r
 plot_gpx3d(y)
 ```
 
-The plots can’t be embedded here, so here’s a screenshot.
-
-Note that the title contains the total distance, the difference in
-minimum and maximum elevation, and the date and time of the activity.
-For simplicity, the function is currently pretty inflexible, but I may
-update this in future.
+The plots can’t be embedded here, so here’s a low-quality screenshot of
+the device:
 
 <div class="figure">
 
-<img src="man/figures/plot_v9000.png" alt="Screenshot of a 3D linechart which represents a workout route. X, Y and Z dimensions are latitude, longitude and elevation. The title is '10.3 km route with elevation disparity of 76 m' with a subtitle giving the date and start and end times. The route is circular; the southern horizontal portion has low elevation and there is a great deal of elevation to the north." width="100%"/>
+<img src="man/figures/plot_v9002.png" alt="Screenshot of a 3D linechart which represents a workout route. X, Y and Z dimensions are latitude, longitude and elevation. The title is '1.4 km route with elevation disparity of 71 m' with a subtitle giving the date and start and end times. The route shows an ascent from near sea level to the top of a hill." width="50%"/>
 
 </div>
 
-I was running at the coast, so the most southern part of the route is
-flat and near sea-level (min elevation of 3 m). I started inland, so had
-to descend before going back uphill (max elevation of 73 m).
+The title gives the route length (1.4 km) and the elevation difference
+from lowest to highest points (71 m); the subtitle gives the date
+(2021-12-25) and the start (09:13:29) to end (09:21:49) times. X and Y
+are longitude and latiutude.
 
 You can use `route_only = TRUE` to remove all of the chart elements
-except for the route itself.
+except for the route itself:
 
 ``` r
 plot_gpx3d(y, route_only = TRUE)
@@ -100,18 +106,21 @@ plot_gpx3d(y, route_only = TRUE)
 
 <div class="figure">
 
-<img src="man/figures/plot_route-only_v9000.png" alt="Screenshot of a 3D linechart that represents a workout route. X, Y and Z dimensions are latitude, longitude and elevation. All chart decoration has been removed. The route is circular; the southern horizontal portion has low elevation and there is a great deal of elevation to the north." width="100%"/>
+<img src="man/figures/plot_route-only_v9002.png" alt="Screenshot of a 3D linechart that represents a workout route. X, Y and Z dimensions are latitude, longitude and elevation. All chart decoration has been removed. The route shows an ascent from near sea level to the top of a hill." width="50%"/>
 
 </div>
 
-The chart is interactive so you can click and drag it, and scroll to
-zoom. Here’s a more exaggerated view of the climb from the south-west.
+The `plot_gpx3d()` output is interactive so you can click and drag it,
+and scroll to zoom. Here’s a more exaggerated view of the elevation:
 
 <div class="figure">
 
-<img src="man/figures/plot_route-only-adjusted_v9000.png" alt="Screenshot of a 3D linechart that represents a workout route. X, Y and Z dimensions are latitude, longitude and elevation. All chart decoration has been removed. The route is circular; the southern horizontal portion has low elevation and there is a great deal of elevation to the north. The angle of the chart has been changed to show the view from the south-west." width="100%"/>
+<img src="man/figures/plot_route-only-adjusted_v9002.png" alt="Screenshot of a 3D linechart that represents a workout route. X, Y and Z dimensions are latitude, longitude and elevation. All chart decoration has been removed. The route shows an ascent from near sea level to the top of a hill. The angle of the chart has been changed to exaggerate the elevation." width="50%"/>
 
 </div>
+
+This highlights how useful the third dimension is, given the ascent from
+sea-level to the top of a hill in this example.
 
 ## Thanks
 

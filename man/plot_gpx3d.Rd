@@ -4,27 +4,29 @@
 \alias{plot_gpx3d}
 \title{Render A 3D Plot Of A Route From A GPX File}
 \usage{
-plot_gpx3d(route_sf, route_only = FALSE)
+plot_gpx3d(route_df, route_only = FALSE)
 }
 \arguments{
-\item{route_sf}{sf-class data.frame, output from \code{\link{extract_gpx3d}}.}
+\item{route_df}{A data.frame, optionally sf-class. Output from must be in the
+format output via \code{\link{extract_gpx3d}}.}
 
-\item{route_only}{Logical. Retain all chart elements if \code{FALSE} (default) or
-retain only the route path if \code{FALSE}.}
+\item{route_only}{Logical. Retain all chart elements if \code{FALSE}
+(default) or retain only the route path if \code{FALSE}.}
 }
 \value{
-A 3D rendering of the route path in a {devoutrgl} device.
+An interactive 3D rendering of the route path in a {devoutrgl}
+device.
 }
 \description{
-Create a {ggplot2} plot object with a third dimension thanks to {ggrgl}. The x and y
-coordinates are the longitude and latitude, the z dimension is the elevation along
-the route. The chart title includes the total distance, elevation disparity, plus the
-date and start/end times.
+Create a {ggplot2} plot object with a third dimension thanks to {ggrgl}. The
+x and y coordinates are the longitude and latitude, the z dimension is the
+elevation along the route. The chart title includes the total distance,
+elevation disparity, plus the date and start/end times.
 }
 \examples{
 \dontrun{
-x <- "~/Downloads/apple_health_export/workout-routes/route_2021-12-25_9.31am.gpx"
-y <- extract_gpx3d(x)
+x <- extract_gpx3d(gfx_segment)
 plot_gpx3d(y)
 }
+
 }
