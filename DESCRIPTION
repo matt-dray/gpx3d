@@ -15,14 +15,22 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Imports: 
+    cryogenic,
+    devout,
     devoutrgl,
     ggplot2,
     ggrgl,
     grDevices,
     sf,
+    snowcrash,
+    triangular,
     xml2
 Remotes: 
+    coolbutuseless/devout,
     coolbutuseless/devoutrgl,
+    coolbutuseless/triangular,
+    coolbutuseless/snowcrash,
+    coolbutuseless/cryogenic,
     coolbutuseless/ggrgl
 Suggests: 
     covr
