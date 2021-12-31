@@ -11,9 +11,10 @@ name: pkgdown
 
 jobs:
   pkgdown:
-    runs-on: ubuntu-latest
+    runs-on: macOS-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      RGL_USE_NULL: true
     steps:
       - uses: actions/checkout@v2
 
