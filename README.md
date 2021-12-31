@@ -25,6 +25,10 @@ extracts the time, coordinates and elevation into an sf-class object.
 You can then plot this as a 3D interactive object thanks to
 [{ggrgl}](https://coolbutuseless.github.io/package/ggrgl/index.html).
 
+Read more [in the accompanying
+blogpost](https://www.rostrum.blog/2021/12/30/gpx3d/) or visit [the
+documentation website](https://matt-dray.github.io/gpx3d/).
+
 ## Install
 
 The package is available from GitHub only.
